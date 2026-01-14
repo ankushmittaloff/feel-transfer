@@ -57,12 +57,17 @@ const Benefits = () => {
 
           {/* Benefits grid */}
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {benefits.map(benefit => <div key={benefit.title} className="flex items-start gap-4 p-6 rounded-2xl bg-card border border-border/50 hover:shadow-card transition-shadow">
+            {benefits.map(benefit => (
+              <div key={benefit.title} className="flex items-start gap-4 p-6 rounded-2xl bg-card border border-border/50 hover:shadow-card transition-shadow">
                 <div className={`w-12 h-12 rounded-xl ${benefit.color} flex items-center justify-center flex-shrink-0`}>
                   <benefit.icon className="w-5 h-5 text-foreground" />
                 </div>
-                
-              </div>)}
+                <div>
+                  <h3 className="font-semibold mb-1">{benefit.title}</h3>
+                  <p className="text-sm text-muted-foreground">{benefit.description}</p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
         <div className="grid-line-left" />
