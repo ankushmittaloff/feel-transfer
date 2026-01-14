@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, lazy, Suspense } from "react";
+import { useState, useEffect, useRef, lazy, Suspense, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Maximize2, Hand } from "lucide-react";
 
@@ -10,12 +10,21 @@ type ViewMode = "2D" | "3D" | "360";
 
 const PanoramaViewer = lazy(() => import("./PanoramaViewer"));
 
+const HINT_DISMISSED_KEY = "interactive-demo-hint-dismissed";
+
 const InteractiveDemo = () => {
   const [mode, setMode] = useState<ViewMode>("3D");
   const [showHint, setShowHint] = useState(false);
-  const [hasShownHint, setHasShownHint] = useState(false);
+  const [hasInteracted, setHasInteracted] = useState(() => {
+    if (typeof window !== "undefined") {
+      return sessionStorage.getItem(HINT_DISMISSED_KEY) === "true";
+    }
+    return false;
+  });
   const [isFullscreen, setIsFullscreen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const panoramaContainerRef = useRef<HTMLDivElement>(null);
+  const hintTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const prefersReducedMotion = 
     typeof window !== "undefined" && 
@@ -23,14 +32,51 @@ const InteractiveDemo = () => {
 
   const transitionDuration = prefersReducedMotion ? 0 : 0.3;
 
-  useEffect(() => {
-    if (mode === "360" && !hasShownHint) {
-      setShowHint(true);
-      setHasShownHint(true);
-      const timer = setTimeout(() => setShowHint(false), 2000);
-      return () => clearTimeout(timer);
+  const dismissHint = useCallback(() => {
+    setShowHint(false);
+    setHasInteracted(true);
+    sessionStorage.setItem(HINT_DISMISSED_KEY, "true");
+    if (hintTimerRef.current) {
+      clearTimeout(hintTimerRef.current);
+      hintTimerRef.current = null;
     }
-  }, [mode, hasShownHint]);
+  }, []);
+
+  useEffect(() => {
+    if (mode === "360" && !hasInteracted) {
+      setShowHint(true);
+      hintTimerRef.current = setTimeout(() => {
+        setShowHint(false);
+      }, 2000);
+      return () => {
+        if (hintTimerRef.current) {
+          clearTimeout(hintTimerRef.current);
+        }
+      };
+    }
+  }, [mode, hasInteracted]);
+
+  // Listen for interaction events on the panorama container
+  useEffect(() => {
+    if (mode !== "360" || hasInteracted) return;
+
+    const container = panoramaContainerRef.current;
+    if (!container) return;
+
+    const handleInteraction = () => {
+      dismissHint();
+    };
+
+    container.addEventListener("mousedown", handleInteraction);
+    container.addEventListener("touchstart", handleInteraction);
+    container.addEventListener("wheel", handleInteraction);
+
+    return () => {
+      container.removeEventListener("mousedown", handleInteraction);
+      container.removeEventListener("touchstart", handleInteraction);
+      container.removeEventListener("wheel", handleInteraction);
+    };
+  }, [mode, hasInteracted, dismissHint]);
 
   const handleFullscreen = () => {
     if (!containerRef.current) return;
@@ -98,6 +144,8 @@ const InteractiveDemo = () => {
                     exit={{ opacity: 0 }}
                     transition={{ duration: transitionDuration }}
                     className="w-full h-full"
+                    ref={panoramaContainerRef}
+                    style={{ filter: "brightness(1.1)" }}
                   >
                     <Suspense 
                       fallback={
@@ -127,41 +175,43 @@ const InteractiveDemo = () => {
                 )}
               </AnimatePresence>
 
-              {/* 360 Hint Overlay */}
+              {/* 360 Hint - Non-blocking, minimal */}
               <AnimatePresence>
                 {showHint && mode === "360" && (
                   <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.9 }}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.2 }}
-                    className="absolute inset-0 flex items-center justify-center bg-black/40 pointer-events-none"
+                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-10"
                   >
-                    <div className="bg-white/95 backdrop-blur-sm rounded-xl px-6 py-4 flex items-center gap-3 shadow-lg">
-                      <Hand className="w-6 h-6 text-primary" />
-                      <span className="text-foreground font-medium">Drag to look around</span>
+                    <div className="bg-gradient-to-r from-black/70 via-black/60 to-black/70 backdrop-blur-md rounded-full px-6 py-3 flex items-center gap-3 shadow-xl">
+                      <Hand className="w-5 h-5 text-white" />
+                      <span className="text-white font-medium text-sm">Drag to look around</span>
                     </div>
                   </motion.div>
                 )}
               </AnimatePresence>
 
-              {/* Bottom-left: 2D thumbnail */}
+              {/* Bottom-left: 2D thumbnail card */}
               <button
                 onClick={() => setMode("2D")}
-                className={`absolute bottom-4 left-4 w-20 h-16 md:w-24 md:h-20 rounded-lg overflow-hidden border-2 transition-all duration-200 shadow-lg hover:scale-105 ${
+                className={`absolute bottom-4 left-4 md:bottom-5 md:left-5 flex flex-col items-center gap-1.5 p-2 bg-white rounded-xl shadow-lg border transition-all duration-200 hover:shadow-xl hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${
                   mode === "2D" 
-                    ? "border-primary ring-2 ring-primary/30" 
-                    : "border-white/80 hover:border-white"
+                    ? "border-primary ring-2 ring-primary/20" 
+                    : "border-border/60 hover:border-border"
                 }`}
               >
-                <img
-                  src={plan2d}
-                  alt="2D floor plan thumbnail"
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
-                  <span className="text-white text-xs font-semibold drop-shadow">2D</span>
+                <div className="w-20 h-14 md:w-28 md:h-20 rounded-lg overflow-hidden">
+                  <img
+                    src={plan2d}
+                    alt="2D floor plan thumbnail"
+                    className="w-full h-full object-cover"
+                  />
                 </div>
+                <span className="text-[10px] md:text-xs font-medium text-muted-foreground">
+                  2D Plan
+                </span>
               </button>
 
               {/* Top-right: Fullscreen button */}
