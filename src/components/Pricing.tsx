@@ -1,14 +1,13 @@
 import { Button } from "@/components/ui/button";
-import { Check, Pause, RefreshCcw, Sparkles } from "lucide-react";
+import { Check, RefreshCcw, Upload } from "lucide-react";
 
 const features = [
-  "Unlimited 3D floor plans",
-  "Avg. 48 hour delivery",
+  "Full 360° home preview (virtual tour)",
+  "Generated in under 180 seconds",
   "Unlimited revisions",
   "Virtual tour exports",
   "Multiple furniture styles",
-  "Up to 3 team members",
-  "Pause or cancel anytime",
+  "Up to 3 family members included",
 ];
 
 const Pricing = () => {
@@ -19,40 +18,27 @@ const Pricing = () => {
           {/* Header */}
           <div className="text-center mb-12">
             <span className="eyebrow">Pricing</span>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold">
-              One subscription, <span className="text-italic">endless renders</span>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold mb-4">
+              One-time pricing. <span className="text-italic">Zero guesswork.</span>
             </h2>
+            <p className="text-lg text-muted-foreground">
+              ₹6,999 per floor — full 360° preview from your 2D plan.
+            </p>
           </div>
 
-          {/* Pricing layout */}
-          <div className="flex flex-col lg:flex-row gap-8 items-center justify-center">
-            {/* Left decorative card */}
-            <div className="hidden lg:block card-elevated p-8 text-center max-w-xs">
-              <span className="badge-pill bg-foreground text-background text-xs mb-6 inline-flex">
-                <Sparkles className="w-3 h-3 mr-1" />
-                Start today
-              </span>
-              <h3 className="text-2xl font-semibold mb-1">Join</h3>
-              <h3 className="text-2xl font-semibold mb-6">FloorCraft</h3>
-              <div className="w-full h-32 bg-gradient-to-br from-coral/20 to-lavender/20 rounded-xl flex items-center justify-center">
-                <div className="w-16 h-16 bg-gradient-coral rounded-xl transform rotate-12 shadow-lg" />
-              </div>
-            </div>
-
-            {/* Main pricing card */}
-            <div className="card-elevated max-w-md w-full overflow-hidden">
+          {/* Main pricing card - centered */}
+          <div className="flex justify-center">
+            <div className="card-elevated max-w-md w-full overflow-hidden ring-2 ring-primary/10 shadow-xl">
               {/* Card header */}
               <div className="p-6 border-b border-border">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-xl font-semibold">Monthly Club</h3>
-                  <span className="badge-pill bg-secondary text-xs uppercase tracking-wider">
-                    Pause or cancel anytime
-                  </span>
+                <h3 className="text-xl font-semibold mb-4">Per Floor</h3>
+                <div className="flex items-baseline gap-1 mb-2">
+                  <span className="text-5xl font-bold">₹6,999</span>
+                  <span className="text-muted-foreground">/ floor</span>
                 </div>
-                <div className="flex items-baseline gap-1">
-                  <span className="text-5xl font-bold">$2,995</span>
-                  <span className="text-muted-foreground">/month</span>
-                </div>
+                <p className="text-sm text-muted-foreground">
+                  Generated in under 180 seconds • Unlimited revisions
+                </p>
               </div>
 
               {/* Features */}
@@ -68,36 +54,28 @@ const Pricing = () => {
               </div>
 
               {/* CTA */}
-              <div className="p-6 pt-0">
+              <div className="p-6 pt-0 text-center">
                 <Button variant="hero" size="xl" className="w-full">
-                  <Sparkles className="w-4 h-4" />
-                  Join today
+                  <Upload className="w-4 h-4" />
+                  Upload Your Floor Plan
                 </Button>
+                <p className="text-xs text-muted-foreground mt-3">
+                  Private upload. Shareable link. Works on mobile.
+                </p>
               </div>
             </div>
           </div>
 
-          {/* Trust badges */}
-          <div className="grid md:grid-cols-2 gap-6 mt-12 max-w-2xl mx-auto">
-            <div className="card-elevated p-5 flex items-start gap-4">
-              <div className="w-10 h-10 rounded-full bg-lavender/20 flex items-center justify-center flex-shrink-0">
-                <Pause className="w-4 h-4 text-lavender" />
-              </div>
-              <div>
-                <h4 className="font-semibold mb-1">Pause anytime</h4>
-                <p className="text-sm text-muted-foreground">
-                  Going on vacation? Pause your subscription and resume when ready.
-                </p>
-              </div>
-            </div>
-            <div className="card-elevated p-5 flex items-start gap-4">
+          {/* Refund card */}
+          <div className="flex justify-center mt-12">
+            <div className="card-elevated p-5 flex items-start gap-4 max-w-md w-full">
               <div className="w-10 h-10 rounded-full bg-sage/20 flex items-center justify-center flex-shrink-0">
                 <RefreshCcw className="w-4 h-4 text-sage" />
               </div>
               <div>
-                <h4 className="font-semibold mb-1">Try it risk-free</h4>
+                <h4 className="font-semibold mb-1">100% refund, no questions asked</h4>
                 <p className="text-sm text-muted-foreground">
-                  Not loving it after a week? Get 75% back, no questions asked.
+                  If you're not satisfied, we'll refund you — no forms, no hassle.
                 </p>
               </div>
             </div>
