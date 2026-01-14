@@ -1,4 +1,5 @@
 import { ArrowRight } from "lucide-react";
+import { motion } from "framer-motion";
 import stage2DPlan from "@/assets/stage-2d-plan.jpg";
 import stage3DColor from "@/assets/stage-3d-color.jpg";
 import stageVRTour from "@/assets/stage-vr-tour.jpg";
@@ -49,7 +50,18 @@ const TransformationStages = () => {
           {/* Stages Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
             {stages.map((stage, index) => (
-              <div key={stage.title} className="relative group">
+              <motion.div
+                key={stage.title}
+                className="relative group"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{
+                  duration: 0.5,
+                  delay: index * 0.15,
+                  ease: [0.25, 0.46, 0.45, 0.94],
+                }}
+              >
                 {/* Card */}
                 <div className="card-elevated overflow-hidden">
                   {/* Image container */}
@@ -81,7 +93,7 @@ const TransformationStages = () => {
                     <ArrowRight className="w-5 h-5 text-coral" />
                   </div>
                 )}
-              </div>
+              </motion.div>
             ))}
           </div>
 
