@@ -50,7 +50,7 @@ const projects: Project[] = [
     beforeImage: stage2dPlan,
     afterImage: stageVrTour,
     beforeLabel: "Architectural Plan",
-    afterLabel: "VR-Ready Tour",
+    afterLabel: "VR-Ready Tour (Coming Soon)",
   },
 ];
 
@@ -74,11 +74,11 @@ const ProjectGallery = () => {
           {/* Header */}
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-10">
             <div>
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight mb-2">
-                Gallery created by AI
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight mb-2">
+                Stop guessing. Start seeing.
               </h2>
               <p className="text-muted-foreground text-lg">
-                {currentProject.name}
+                We generate multiple views so decisions become obvious.
               </p>
             </div>
             <Button variant="outline" className="w-fit border-primary text-primary hover:bg-primary hover:text-primary-foreground">
