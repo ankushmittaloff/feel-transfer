@@ -1,33 +1,34 @@
-import { Zap, Shield, Palette, Clock, RefreshCcw, Award } from "lucide-react";
+import { Users, PiggyBank, ShieldCheck, Clock, Move, Link2 } from "lucide-react";
+
 const benefits = [{
-  icon: Zap,
-  title: "Lightning fast",
-  description: "Receive your 3D renders within 24-48 hours on average.",
+  icon: Users,
+  title: "Everyone sees the same home.",
+  description: "Share the 360° link with your family so decisions stop becoming debates and everyone agrees on the same reality.",
   color: "bg-coral/10"
 }, {
-  icon: Shield,
-  title: "Fixed monthly rate",
-  description: "No surprises. Pay the same predictable price each month.",
+  icon: PiggyBank,
+  title: "Fix issues when fixes are cheap.",
+  description: "Spot tight passages, awkward door swings, and furniture misfits early before changes turn into rework and extra cost.",
   color: "bg-sky/10"
 }, {
-  icon: Palette,
-  title: "Multiple styles",
-  description: "Choose from modern, classic, minimal, or custom aesthetics.",
+  icon: ShieldCheck,
+  title: "No more \"hope it looks right.\"",
+  description: "See the layout before you commit so you build with calm confidence, not construction anxiety.",
   color: "bg-lavender/10"
 }, {
   icon: Clock,
-  title: "Unlimited requests",
-  description: "Queue as many floor plans as you need. We handle them all.",
+  title: "Decide faster. Build sooner.",
+  description: "When you can visualize clearly, you reduce back-and-forth with your architect and finalize layouts in fewer cycles.",
   color: "bg-sage/10"
 }, {
-  icon: RefreshCcw,
-  title: "Unlimited revisions",
-  description: "Not happy? We'll revise until it's perfect. No extra cost.",
+  icon: Move,
+  title: "Feel the space—not just the lines.",
+  description: "Understand room proportions, movement flow, and \"how it will feel\" in a way 2D plans simply can't show.",
   color: "bg-coral/10"
 }, {
-  icon: Award,
-  title: "Premium quality",
-  description: "Photorealistic renders that win clients and close deals.",
+  icon: Link2,
+  title: "One link. Anywhere. Anytime.",
+  description: "Open on any phone or laptop and share instantly with your architect, contractor, or family—no app, no confusion.",
   color: "bg-sky/10"
 }];
 const Benefits = () => {
