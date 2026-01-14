@@ -5,6 +5,7 @@ import ProblemSection from "@/components/ProblemSection";
 import HowItWorks from "@/components/HowItWorks";
 import ProjectGallery from "@/components/ProjectGallery";
 import TransformationStages from "@/components/TransformationStages";
+import InteractiveDemo from "@/components/InteractiveDemo";
 import Benefits from "@/components/Benefits";
 import Pricing from "@/components/Pricing";
 import FAQ from "@/components/FAQ";
@@ -18,6 +19,7 @@ const Index = () => {
       <ServicesMarquee />
       <ProblemSection />
       <TransformationStages />
+      <InteractiveDemo />
       <HowItWorks />
       <ProjectGallery />
       <Benefits />
