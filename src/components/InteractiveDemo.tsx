@@ -6,14 +6,49 @@ import plan2d from "@/assets/plan_2d.jpg";
 import dollhouse3d from "@/assets/dollhouse_3d.jpg";
 import living360 from "@/assets/living_360.jpg";
 
+// Panorama assets for style/view combinations
+import modernCity360 from "@/assets/modern_city_360.jpg";
+import scandiGarden360 from "@/assets/scandi_garden_360.jpg";
+import japandiPool360 from "@/assets/japandi_pool_360.jpg";
+
 type ViewMode = "2D" | "3D" | "360";
+type InteriorStyle = "modern" | "scandi" | "japandi";
+type WindowView = "city" | "garden" | "pool";
 
 const PanoramaViewer = lazy(() => import("./PanoramaViewer"));
 
 const HINT_DISMISSED_KEY = "interactive-demo-hint-dismissed";
 
+// Define available panorama combinations
+const PANORAMA_MAP: Record<string, string | null> = {
+  "modern_city": modernCity360,
+  "modern_garden": null,
+  "modern_pool": null,
+  "scandi_city": null,
+  "scandi_garden": scandiGarden360,
+  "scandi_pool": null,
+  "japandi_city": null,
+  "japandi_garden": null,
+  "japandi_pool": japandiPool360,
+};
+
+const STYLE_OPTIONS: { value: InteriorStyle; label: string }[] = [
+  { value: "modern", label: "Modern" },
+  { value: "scandi", label: "Scandi" },
+  { value: "japandi", label: "Japandi" },
+];
+
+const VIEW_OPTIONS: { value: WindowView; label: string }[] = [
+  { value: "city", label: "City" },
+  { value: "garden", label: "Garden" },
+  { value: "pool", label: "Pool" },
+];
+
 const InteractiveDemo = () => {
   const [mode, setMode] = useState<ViewMode>("3D");
+  const [interiorStyle, setInteriorStyle] = useState<InteriorStyle>("modern");
+  const [windowView, setWindowView] = useState<WindowView>("city");
+  const [isLoading, setIsLoading] = useState(false);
   const [showHint, setShowHint] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(() => {
     if (typeof window !== "undefined") {
@@ -31,6 +66,49 @@ const InteractiveDemo = () => {
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   const transitionDuration = prefersReducedMotion ? 0 : 0.3;
+
+  const getPanoramaKey = (style: InteriorStyle, view: WindowView) => `${style}_${view}`;
+  
+  const getCurrentPanorama = () => {
+    const key = getPanoramaKey(interiorStyle, windowView);
+    return PANORAMA_MAP[key] || living360;
+  };
+
+  const isOptionAvailable = (style: InteriorStyle, view: WindowView) => {
+    const key = getPanoramaKey(style, view);
+    return PANORAMA_MAP[key] !== null;
+  };
+
+  const handleStyleChange = (style: InteriorStyle) => {
+    if (!isOptionAvailable(style, windowView)) {
+      // Find first available view for this style
+      const availableView = VIEW_OPTIONS.find(v => isOptionAvailable(style, v.value));
+      if (availableView) {
+        setWindowView(availableView.value);
+      }
+    }
+    setInteriorStyle(style);
+    triggerLoadingTransition();
+  };
+
+  const handleViewChange = (view: WindowView) => {
+    if (!isOptionAvailable(interiorStyle, view)) {
+      // Find first available style for this view
+      const availableStyle = STYLE_OPTIONS.find(s => isOptionAvailable(s.value, view));
+      if (availableStyle) {
+        setInteriorStyle(availableStyle.value);
+      }
+    }
+    setWindowView(view);
+    triggerLoadingTransition();
+  };
+
+  const triggerLoadingTransition = () => {
+    if (mode === "360") {
+      setIsLoading(true);
+      setTimeout(() => setIsLoading(false), 400);
+    }
+  };
 
   const dismissHint = useCallback(() => {
     setShowHint(false);
@@ -138,7 +216,7 @@ const InteractiveDemo = () => {
               <AnimatePresence mode="wait">
                 {mode === "360" ? (
                   <motion.div
-                    key="360"
+                    key={`360-${interiorStyle}-${windowView}`}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
@@ -147,6 +225,19 @@ const InteractiveDemo = () => {
                     ref={panoramaContainerRef}
                     style={{ filter: "brightness(1.1)" }}
                   >
+                    {/* Loading blur overlay */}
+                    <AnimatePresence>
+                      {isLoading && (
+                        <motion.div
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 0.15 }}
+                          className="absolute inset-0 z-20 bg-white/40 backdrop-blur-md"
+                        />
+                      )}
+                    </AnimatePresence>
+                    
                     <Suspense 
                       fallback={
                         <div className="w-full h-full flex items-center justify-center bg-muted">
@@ -154,7 +245,7 @@ const InteractiveDemo = () => {
                         </div>
                       }
                     >
-                      <PanoramaViewer imageUrl={living360} />
+                      <PanoramaViewer imageUrl={getCurrentPanorama()} />
                     </Suspense>
                   </motion.div>
                 ) : (
@@ -243,8 +334,91 @@ const InteractiveDemo = () => {
           </div>
         </div>
 
+        {/* Style & View Toggles - Only visible in 360 mode */}
+        <AnimatePresence>
+          {mode === "360" && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.25 }}
+              className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-10"
+            >
+              {/* Interior Style Toggle */}
+              <div className="flex flex-col items-center gap-2">
+                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Interior Style
+                </span>
+                <div className="flex bg-white rounded-full p-1 shadow-md border border-border/40">
+                  {STYLE_OPTIONS.map((option) => {
+                    const isAvailable = isOptionAvailable(option.value, windowView);
+                    const isActive = interiorStyle === option.value;
+                    
+                    return (
+                      <button
+                        key={option.value}
+                        onClick={() => isAvailable && handleStyleChange(option.value)}
+                        disabled={!isAvailable}
+                        className={`relative px-4 py-2 text-sm font-medium rounded-full transition-all duration-200 ${
+                          isActive
+                            ? "bg-primary text-primary-foreground shadow-sm"
+                            : isAvailable
+                              ? "text-foreground hover:bg-muted/60"
+                              : "text-muted-foreground/50 cursor-not-allowed"
+                        }`}
+                      >
+                        {option.label}
+                        {!isAvailable && (
+                          <span className="absolute -bottom-5 left-1/2 -translate-x-1/2 text-[10px] text-muted-foreground whitespace-nowrap">
+                            Coming soon
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Window View Toggle */}
+              <div className="flex flex-col items-center gap-2">
+                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Window View
+                </span>
+                <div className="flex bg-white rounded-full p-1 shadow-md border border-border/40">
+                  {VIEW_OPTIONS.map((option) => {
+                    const isAvailable = isOptionAvailable(interiorStyle, option.value);
+                    const isActive = windowView === option.value;
+                    
+                    return (
+                      <button
+                        key={option.value}
+                        onClick={() => isAvailable && handleViewChange(option.value)}
+                        disabled={!isAvailable}
+                        className={`relative px-4 py-2 text-sm font-medium rounded-full transition-all duration-200 ${
+                          isActive
+                            ? "bg-primary text-primary-foreground shadow-sm"
+                            : isAvailable
+                              ? "text-foreground hover:bg-muted/60"
+                              : "text-muted-foreground/50 cursor-not-allowed"
+                        }`}
+                      >
+                        {option.label}
+                        {!isAvailable && (
+                          <span className="absolute -bottom-5 left-1/2 -translate-x-1/2 text-[10px] text-muted-foreground whitespace-nowrap">
+                            Coming soon
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {/* Caption */}
-        <p className="text-center text-sm text-muted-foreground mt-6">
+        <p className="text-center text-sm text-muted-foreground mt-8">
           Click the thumbnail or buttons to switch views • Drag to explore in 360° mode
         </p>
       </div>
