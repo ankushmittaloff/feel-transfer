@@ -8,7 +8,13 @@ import living360 from "@/assets/living_360.jpg";
 
 // Panorama assets for style/view combinations
 import modernCity360 from "@/assets/modern_city_360.jpg";
+import modernGarden360 from "@/assets/modern_garden_360.jpg";
+import modernPool360 from "@/assets/modern_pool_360.jpg";
+import scandiCity360 from "@/assets/scandi_city_360.jpg";
 import scandiGarden360 from "@/assets/scandi_garden_360.jpg";
+import scandiPool360 from "@/assets/scandi_pool_360.jpg";
+import japandiCity360 from "@/assets/japandi_city_360.jpg";
+import japandiGarden360 from "@/assets/japandi_garden_360.jpg";
 import japandiPool360 from "@/assets/japandi_pool_360.jpg";
 
 type ViewMode = "2D" | "3D" | "360";
@@ -19,16 +25,16 @@ const PanoramaViewer = lazy(() => import("./PanoramaViewer"));
 
 const HINT_DISMISSED_KEY = "interactive-demo-hint-dismissed";
 
-// Define available panorama combinations
-const PANORAMA_MAP: Record<string, string | null> = {
+// Define all panorama combinations - all are now available
+const PANORAMA_MAP: Record<string, string> = {
   "modern_city": modernCity360,
-  "modern_garden": null,
-  "modern_pool": null,
-  "scandi_city": null,
+  "modern_garden": modernGarden360,
+  "modern_pool": modernPool360,
+  "scandi_city": scandiCity360,
   "scandi_garden": scandiGarden360,
-  "scandi_pool": null,
-  "japandi_city": null,
-  "japandi_garden": null,
+  "scandi_pool": scandiPool360,
+  "japandi_city": japandiCity360,
+  "japandi_garden": japandiGarden360,
   "japandi_pool": japandiPool360,
 };
 
@@ -74,9 +80,9 @@ const InteractiveDemo = () => {
     return PANORAMA_MAP[key] || living360;
   };
 
-  const isOptionAvailable = (style: InteriorStyle, view: WindowView) => {
-    const key = getPanoramaKey(style, view);
-    return PANORAMA_MAP[key] !== null;
+  const isOptionAvailable = (_style: InteriorStyle, _view: WindowView) => {
+    // All combinations are now available
+    return true;
   };
 
   const handleStyleChange = (style: InteriorStyle) => {
