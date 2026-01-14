@@ -1,71 +1,79 @@
-import { Users, PiggyBank, ShieldCheck, Clock, Move, Link2 } from "lucide-react";
+import { Users, ShieldCheck, BadgeCheck, Timer, Move, Link2 } from "lucide-react";
 
 const benefits = [{
   icon: Users,
-  title: "Everyone sees the same home.",
-  description: "Share the 360° link with your family so decisions stop becoming debates and everyone agrees on the same reality.",
+  title: "Family aligned",
+  description: "Everyone sees the same home.",
+  tag: "Less debate",
   color: "bg-coral/10"
 }, {
-  icon: PiggyBank,
-  title: "Fix issues when fixes are cheap.",
-  description: "Spot tight passages, awkward door swings, and furniture misfits early before changes turn into rework and extra cost.",
+  icon: ShieldCheck,
+  title: "Catch mistakes early",
+  description: "Fix layout issues before construction starts.",
+  tag: "Saves rework",
   color: "bg-sky/10"
 }, {
-  icon: ShieldCheck,
-  title: "No more \"hope it looks right.\"",
-  description: "See the layout before you commit so you build with calm confidence, not construction anxiety.",
+  icon: BadgeCheck,
+  title: "Build with confidence",
+  description: "No more 'hope it looks right.'",
+  tag: "Less stress",
   color: "bg-lavender/10"
 }, {
-  icon: Clock,
-  title: "Decide faster. Build sooner.",
-  description: "When you can visualize clearly, you reduce back-and-forth with your architect and finalize layouts in fewer cycles.",
+  icon: Timer,
+  title: "Faster approvals",
+  description: "Finalize layouts in fewer cycles.",
+  tag: "Saves time",
   color: "bg-sage/10"
 }, {
   icon: Move,
-  title: "Feel the space—not just the lines.",
-  description: "Understand room proportions, movement flow, and \"how it will feel\" in a way 2D plans simply can't show.",
+  title: "Feel the space",
+  description: "Flow and proportions become obvious.",
+  tag: "Better decisions",
   color: "bg-coral/10"
 }, {
   icon: Link2,
-  title: "One link. Anywhere. Anytime.",
-  description: "Open on any phone or laptop and share instantly with your architect, contractor, or family—no app, no confusion.",
+  title: "Shareable preview",
+  description: "One link for family + architect.",
+  tag: "No app needed",
   color: "bg-sky/10"
 }];
+
 const Benefits = () => {
-  return <section className="section-padding bg-secondary/30">
+  return (
+    <section className="section-padding bg-secondary/30">
       <div className="container-main">
         <div className="inner-container">
-          {/* Story text */}
-          <div className="max-w-3xl mx-auto text-center mb-16">
-            <p className="text-xl md:text-2xl text-muted-foreground leading-relaxed">
-              We <span className="text-italic text-foreground">revolutionized</span> floor plan visualization 
-              by combining AI with expert design. Our subscription model gives you unlimited access to 
-              stunning 3D renders—no hourly rates, no surprises.
-            </p>
-          </div>
+          {/* Intro line */}
+          <p className="text-center text-muted-foreground mb-16 max-w-2xl mx-auto">
+            Six reasons homeowners love seeing their home in 360° — before construction begins.
+          </p>
 
           {/* Section header */}
-          <div className="text-center mb-12">
-            <span className="eyebrow">Membership benefits</span>
-            <h2 className="text-3xl md:text-4xl font-semibold mb-4">
-              It's <span className="text-italic">Make layout decisions with confidence save money on rework, reduce stress, and keep your family and architect aligned before the first brick.</span> better
+          <div className="text-center mb-16">
+            <span className="eyebrow">Benefits</span>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold mb-4">
+              You'll feel confident <span className="text-italic">before</span> you build.
             </h2>
             <p className="text-lg text-muted-foreground max-w-xl mx-auto">
-              Replace expensive 3D artists and slow turnaround times with one simple subscription.
+              See the layout clearly, align your family, and avoid expensive last-minute changes.
             </p>
           </div>
 
           {/* Benefits grid */}
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {benefits.map(benefit => (
-              <div key={benefit.title} className="flex items-start gap-4 p-6 rounded-2xl bg-card border border-border/50 hover:shadow-card transition-shadow">
-                <div className={`w-12 h-12 rounded-xl ${benefit.color} flex items-center justify-center flex-shrink-0`}>
+              <div 
+                key={benefit.title} 
+                className="flex flex-col p-6 rounded-2xl bg-card border border-border/50 hover:shadow-card transition-shadow min-h-[180px]"
+              >
+                <div className={`w-12 h-12 rounded-xl ${benefit.color} flex items-center justify-center mb-4`}>
                   <benefit.icon className="w-5 h-5 text-foreground" />
                 </div>
-                <div>
-                  <h3 className="font-semibold mb-1">{benefit.title}</h3>
-                  <p className="text-sm text-muted-foreground">{benefit.description}</p>
-                </div>
+                <h3 className="font-semibold text-lg mb-2">{benefit.title}</h3>
+                <p className="text-sm text-muted-foreground mb-4">{benefit.description}</p>
+                <span className="mt-auto inline-flex w-fit text-xs font-medium px-2.5 py-1 rounded-full bg-secondary text-muted-foreground">
+                  {benefit.tag}
+                </span>
               </div>
             ))}
           </div>
@@ -73,6 +81,8 @@ const Benefits = () => {
         <div className="grid-line-left" />
         <div className="grid-line-right" />
       </div>
-    </section>;
+    </section>
+  );
 };
+
 export default Benefits;
