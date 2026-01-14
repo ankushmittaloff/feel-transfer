@@ -24,16 +24,6 @@ const steps = [
   },
 ];
 
-const services = [
-  "3D Floor Plans",
-  "Virtual Tours",
-  "Furnished Renders",
-  "Interior Design",
-  "Exterior Views",
-  "2D to 3D Conversion",
-  "Real Estate Visuals",
-  "Architecture Viz",
-];
 
 const HowItWorks = () => {
   return (
@@ -66,20 +56,6 @@ const HowItWorks = () => {
                 </div>
               </div>
             ))}
-          </div>
-
-          {/* Marquee of services */}
-          <div className="relative overflow-hidden py-4">
-            <div className="flex gap-4 animate-marquee">
-              {[...services, ...services].map((service, index) => (
-                <span
-                  key={index}
-                  className="service-pill whitespace-nowrap"
-                >
-                  {service}
-                </span>
-              ))}
-            </div>
           </div>
 
           {/* Logo cloud placeholder */}
