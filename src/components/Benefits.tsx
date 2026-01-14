@@ -1,4 +1,6 @@
 import { Users, ShieldCheck, BadgeCheck, Timer, Move, Link2 } from "lucide-react";
+import { ScrollReveal, StaggerContainer, StaggerItem } from "@/components/animations/ScrollReveal";
+import { CardHover, IconTileHover } from "@/components/animations/CardHover";
 
 const benefits = [{
   icon: Users,
@@ -44,39 +46,42 @@ const Benefits = () => {
       <div className="container-main">
         <div className="inner-container">
           {/* Intro line */}
-          <p className="text-center text-muted-foreground mb-16 max-w-2xl mx-auto">
-            Six reasons homeowners love seeing their home in 360° — before construction begins.
-          </p>
+          <ScrollReveal>
+            <p className="text-center text-muted-foreground mb-16 max-w-2xl mx-auto">
+              Six reasons homeowners love seeing their home in 360° — before construction begins.
+            </p>
+          </ScrollReveal>
 
           {/* Section header */}
-          <div className="text-center mb-16">
-            <span className="eyebrow">Benefits</span>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold mb-4">
-              You'll feel confident <span className="text-italic">before</span> you build.
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-xl mx-auto">
-              See the layout clearly, align your family, and avoid expensive last-minute changes.
-            </p>
-          </div>
+          <ScrollReveal delay={0.1}>
+            <div className="text-center mb-16">
+              <span className="eyebrow">Benefits</span>
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold mb-4">
+                You'll feel confident <span className="text-italic">before</span> you build.
+              </h2>
+              <p className="text-lg text-muted-foreground max-w-xl mx-auto">
+                See the layout clearly, align your family, and avoid expensive last-minute changes.
+              </p>
+            </div>
+          </ScrollReveal>
 
           {/* Benefits grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <StaggerContainer staggerDelay={0.08} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {benefits.map(benefit => (
-              <div 
-                key={benefit.title} 
-                className="flex flex-col p-6 rounded-2xl bg-card border border-border/50 hover:shadow-card transition-shadow min-h-[180px]"
-              >
-                <div className={`w-12 h-12 rounded-xl ${benefit.color} flex items-center justify-center mb-4`}>
-                  <benefit.icon className="w-5 h-5 text-foreground" />
-                </div>
-                <h3 className="font-semibold text-lg mb-2">{benefit.title}</h3>
-                <p className="text-sm text-muted-foreground mb-4">{benefit.description}</p>
-                <span className="mt-auto inline-flex w-fit text-xs font-medium px-2.5 py-1 rounded-full bg-secondary text-muted-foreground">
-                  {benefit.tag}
-                </span>
-              </div>
+              <StaggerItem key={benefit.title}>
+                <CardHover className="flex flex-col p-6 rounded-2xl bg-card border border-border/50 min-h-[180px]">
+                  <IconTileHover className={`w-12 h-12 rounded-xl ${benefit.color} flex items-center justify-center mb-4`}>
+                    <benefit.icon className="w-5 h-5 text-foreground" />
+                  </IconTileHover>
+                  <h3 className="font-semibold text-lg mb-2">{benefit.title}</h3>
+                  <p className="text-sm text-muted-foreground mb-4">{benefit.description}</p>
+                  <span className="mt-auto inline-flex w-fit text-xs font-medium px-2.5 py-1 rounded-full bg-secondary text-muted-foreground">
+                    {benefit.tag}
+                  </span>
+                </CardHover>
+              </StaggerItem>
             ))}
-          </div>
+          </StaggerContainer>
         </div>
         <div className="grid-line-left" />
         <div className="grid-line-right" />
