@@ -38,76 +38,85 @@ const BeforeAfterSlider = () => {
   };
 
   return (
-    <div className="relative w-full max-w-lg mx-auto">
-      {/* Labels */}
-      <div className="flex justify-between mb-3">
-        <span className="badge-pill bg-secondary text-foreground text-xs font-medium">
-          2D Floor Plan
-        </span>
-        <span className="badge-pill bg-primary text-primary-foreground text-xs font-medium">
-          3D Render
+    <div className="relative w-full max-w-lg mx-auto flex items-center gap-4">
+      {/* Side instruction - visible on larger screens */}
+      <div className="hidden lg:flex flex-col items-center gap-2 text-muted-foreground">
+        <span className="text-xs font-medium writing-mode-vertical rotate-180" style={{ writingMode: 'vertical-rl' }}>
+          ← Drag to compare →
         </span>
       </div>
 
-      {/* Slider container */}
-      <div
-        ref={containerRef}
-        className="relative w-full aspect-square rounded-2xl overflow-hidden cursor-ew-resize shadow-elegant select-none"
-        onMouseDown={handleMouseDown}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseUp}
-        onMouseMove={handleMouseMove}
-        onTouchMove={handleTouchMove}
-        onClick={handleClick}
-      >
-        {/* 3D Image (background) */}
-        <img
-          src={floorplan3d}
-          alt="3D rendered floor plan"
-          className="absolute inset-0 w-full h-full object-cover"
-          draggable={false}
-        />
+      <div className="flex-1">
+        {/* Labels */}
+        <div className="flex justify-between mb-3">
+          <span className="badge-pill bg-secondary text-foreground text-xs font-medium">
+            2D Floor Plan
+          </span>
+          <span className="badge-pill bg-primary text-primary-foreground text-xs font-medium">
+            3D Render
+          </span>
+        </div>
 
-        {/* 2D Image (clipped overlay) */}
+        {/* Slider container */}
         <div
-          className="absolute inset-0 overflow-hidden"
-          style={{ clipPath: `inset(0 ${100 - sliderPosition}% 0 0)` }}
+          ref={containerRef}
+          className="relative w-full aspect-square rounded-2xl overflow-hidden cursor-ew-resize shadow-elegant select-none"
+          onMouseDown={handleMouseDown}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp}
+          onMouseMove={handleMouseMove}
+          onTouchMove={handleTouchMove}
+          onClick={handleClick}
         >
+          {/* 3D Image (background) */}
           <img
-            src={floorplan2d}
-            alt="2D floor plan"
+            src={floorplan3d}
+            alt="3D rendered floor plan"
             className="absolute inset-0 w-full h-full object-cover"
             draggable={false}
           />
-        </div>
 
-        {/* Slider line */}
-        <div
-          className="absolute top-0 bottom-0 w-1 bg-white shadow-lg z-10"
-          style={{ left: `${sliderPosition}%`, transform: "translateX(-50%)" }}
-        >
-          {/* Slider handle */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center">
-            <div className="flex gap-0.5">
-              <div className="w-0.5 h-4 bg-muted-foreground rounded-full" />
-              <div className="w-0.5 h-4 bg-muted-foreground rounded-full" />
+          {/* 2D Image (clipped overlay) */}
+          <div
+            className="absolute inset-0 overflow-hidden"
+            style={{ clipPath: `inset(0 ${100 - sliderPosition}% 0 0)` }}
+          >
+            <img
+              src={floorplan2d}
+              alt="2D floor plan"
+              className="absolute inset-0 w-full h-full object-cover"
+              draggable={false}
+            />
+          </div>
+
+          {/* Slider line */}
+          <div
+            className="absolute top-0 bottom-0 w-1 bg-white shadow-lg z-10"
+            style={{ left: `${sliderPosition}%`, transform: "translateX(-50%)" }}
+          >
+            {/* Slider handle */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center">
+              <div className="flex gap-0.5">
+                <div className="w-0.5 h-4 bg-muted-foreground rounded-full" />
+                <div className="w-0.5 h-4 bg-muted-foreground rounded-full" />
+              </div>
             </div>
+          </div>
+
+          {/* Corner labels */}
+          <div className="absolute bottom-3 left-3 bg-background/90 backdrop-blur-sm px-3 py-1.5 rounded-full text-xs font-medium text-foreground">
+            Before
+          </div>
+          <div className="absolute bottom-3 right-3 bg-primary/90 backdrop-blur-sm px-3 py-1.5 rounded-full text-xs font-medium text-primary-foreground">
+            After
           </div>
         </div>
 
-        {/* Corner labels */}
-        <div className="absolute bottom-3 left-3 bg-background/90 backdrop-blur-sm px-3 py-1.5 rounded-full text-xs font-medium text-foreground">
-          Before
-        </div>
-        <div className="absolute bottom-3 right-3 bg-primary/90 backdrop-blur-sm px-3 py-1.5 rounded-full text-xs font-medium text-primary-foreground">
-          After
-        </div>
+        {/* Mobile instruction - only visible on smaller screens */}
+        <p className="lg:hidden text-center text-muted-foreground text-sm mt-3">
+          ← Drag to compare →
+        </p>
       </div>
-
-      {/* Instruction text */}
-      <p className="text-center text-muted-foreground text-sm mt-3">
-        ← Drag to compare →
-      </p>
     </div>
   );
 };
