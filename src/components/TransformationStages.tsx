@@ -1,5 +1,8 @@
 import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
+import { useReducedMotion } from "@/hooks/useScrollReveal";
+import { CardHover } from "@/components/animations/CardHover";
+import { ScrollReveal } from "@/components/animations/ScrollReveal";
 import stage2DPlan from "@/assets/stage-2d-plan.jpg";
 import stage3DColor from "@/assets/stage-3d-color.jpg";
 import stageVRTour from "@/assets/stage-vr-tour.jpg";
