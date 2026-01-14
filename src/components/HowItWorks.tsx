@@ -1,12 +1,6 @@
 import { Upload, Cpu, Eye } from "lucide-react";
 import stageRender from "@/assets/stage-render.jpg";
 import stageVrTour from "@/assets/stage-vr-tour.jpg";
-import { ScrollReveal, StaggerContainer, StaggerItem } from "@/components/animations/ScrollReveal";
-import { CardHover, IconTileHover } from "@/components/animations/CardHover";
-import { ConnectorLine } from "@/components/animations/ConnectorLine";
-import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
-import { useReducedMotion } from "@/hooks/useScrollReveal";
 
 const steps = [
   {
@@ -35,126 +29,98 @@ const steps = [
   },
 ];
 
-const StepCard = ({ step, index }: { step: typeof steps[0]; index: number }) => {
-  const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-50px" });
-  const prefersReducedMotion = useReducedMotion();
-
-  return (
-    <StaggerItem>
-      <CardHover
-        className={`relative rounded-2xl overflow-hidden h-full ${
-          step.isDark 
-            ? "bg-charcoal text-cream" 
-            : "bg-card border border-border shadow-sm"
-        }`}
-      >
-        <div className="p-6 pb-4">
-          {/* Icon with pop animation */}
-          <motion.div
-            ref={ref}
-            initial={prefersReducedMotion ? {} : { scale: 0.98, opacity: 0 }}
-            animate={isInView || prefersReducedMotion ? { scale: 1, opacity: 1 } : {}}
-            transition={{ duration: 0.3, delay: 0.2, ease: "easeOut" }}
-          >
-            <IconTileHover
-              className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-5 ${
-                step.isDark 
-                  ? "bg-cream/10 border border-cream/20" 
-                  : "bg-muted border border-border"
-              }`}
-            >
-              <step.icon className={`w-6 h-6 ${step.isDark ? "text-cream" : "text-foreground"}`} />
-            </IconTileHover>
-          </motion.div>
-
-          {/* Step number - positioned top right */}
-          <div className={`absolute top-4 right-6 text-7xl font-bold ${
-            step.isDark ? "text-cream/10" : "text-foreground/5"
-          }`}>
-            {index + 1}
-          </div>
-
-          {/* Title */}
-          <h3 className={`text-xl font-semibold mb-3 ${step.isDark ? "text-cream" : "text-foreground"}`}>
-            {step.title}
-          </h3>
-
-          {/* Description */}
-          <p className={`text-sm leading-relaxed ${step.isDark ? "text-cream/70" : "text-muted-foreground"}`}>
-            {step.description}
-          </p>
-
-          {/* Code-like tags for dark card */}
-          {step.tags.length > 0 && (
-            <div className="flex flex-wrap gap-2 mt-6">
-              {step.tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="px-3 py-1.5 rounded-md bg-sage/20 text-sage text-xs font-mono"
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Image at bottom for non-dark cards */}
-        {step.image && (
-          <div className="relative h-48 mt-2">
-            <img
-              src={step.image}
-              alt={step.title}
-              className="w-full h-full object-cover"
-              loading="lazy"
-            />
-            {/* Overlay icon for the last card */}
-            {index === 2 && (
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-background/90 backdrop-blur-sm flex items-center justify-center shadow-lg">
-                <Eye className="w-5 h-5 text-foreground" />
-              </div>
-            )}
-          </div>
-        )}
-      </CardHover>
-    </StaggerItem>
-  );
-};
-
 const HowItWorks = () => {
   return (
     <section className="section-padding">
       <div className="container-main">
         <div className="inner-container">
           {/* Header */}
-          <ScrollReveal>
-            <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold leading-tight mb-4">
-                The way floor plans <span className="text-italic">should've</span> been done.
-              </h2>
-              <p className="text-muted-foreground text-lg">
-                No complex CAD software. No waiting weeks for architects.
-              </p>
-            </div>
-          </ScrollReveal>
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold leading-tight mb-4">
+              The way floor plans <span className="text-italic">should've</span> been done.
+            </h2>
+            <p className="text-muted-foreground text-lg">
+              No complex CAD software. No waiting weeks for architects.
+            </p>
+          </div>
 
-          {/* Steps grid with connector line */}
-          <div className="relative mb-16">
-            <ConnectorLine />
-            <StaggerContainer staggerDelay={0.1} className="grid md:grid-cols-3 gap-6 relative z-10">
-              {steps.map((step, index) => (
-                <StepCard key={step.title} step={step} index={index} />
-              ))}
-            </StaggerContainer>
+          {/* Steps grid */}
+          <div className="grid md:grid-cols-3 gap-6 mb-16">
+            {steps.map((step, index) => (
+              <div
+                key={step.title}
+                className={`relative rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1 ${
+                  step.isDark 
+                    ? "bg-charcoal text-cream" 
+                    : "bg-card border border-border shadow-sm"
+                }`}
+              >
+                <div className="p-6 pb-4">
+                  {/* Icon */}
+                  <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-5 ${
+                    step.isDark 
+                      ? "bg-cream/10 border border-cream/20" 
+                      : "bg-muted border border-border"
+                  }`}>
+                    <step.icon className={`w-6 h-6 ${step.isDark ? "text-cream" : "text-foreground"}`} />
+                  </div>
+
+                  {/* Step number - positioned top right */}
+                  <div className={`absolute top-4 right-6 text-7xl font-bold ${
+                    step.isDark ? "text-cream/10" : "text-foreground/5"
+                  }`}>
+                    {index + 1}
+                  </div>
+
+                  {/* Title */}
+                  <h3 className={`text-xl font-semibold mb-3 ${step.isDark ? "text-cream" : "text-foreground"}`}>
+                    {step.title}
+                  </h3>
+
+                  {/* Description */}
+                  <p className={`text-sm leading-relaxed ${step.isDark ? "text-cream/70" : "text-muted-foreground"}`}>
+                    {step.description}
+                  </p>
+
+                  {/* Code-like tags for dark card */}
+                  {step.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mt-6">
+                      {step.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="px-3 py-1.5 rounded-md bg-sage/20 text-sage text-xs font-mono"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Image at bottom for non-dark cards */}
+                {step.image && (
+                  <div className="relative h-48 mt-2">
+                    <img
+                      src={step.image}
+                      alt={step.title}
+                      className="w-full h-full object-cover"
+                    />
+                    {/* Overlay icon for the last card */}
+                    {index === 2 && (
+                      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-background/90 backdrop-blur-sm flex items-center justify-center shadow-lg">
+                        <Eye className="w-5 h-5 text-foreground" />
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
 
           {/* Trusted by */}
-          <ScrollReveal delay={0.3}>
-            <div className="flex flex-wrap items-center justify-center gap-8 md:gap-16 mt-16 opacity-40">
-              <span className="text-sm font-medium uppercase tracking-widest">Trusted by 500+ agencies</span>
-            </div>
-          </ScrollReveal>
+          <div className="flex flex-wrap items-center justify-center gap-8 md:gap-16 mt-16 opacity-40">
+            <span className="text-sm font-medium uppercase tracking-widest">Trusted by 500+ agencies</span>
+          </div>
         </div>
         <div className="grid-line-left" />
         <div className="grid-line-right" />
