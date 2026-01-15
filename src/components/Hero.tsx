@@ -26,7 +26,7 @@ const Hero = () => {
                 <Button 
                   variant="heroOutline" 
                   size="xl"
-                  onClick={() => document.getElementById('interactive-demo')?.scrollIntoView({ behavior: 'smooth' })}
+                  onClick={() => document.getElementById('interactive-demo')?.scrollIntoView({ behavior: 'instant' })}
                 >
                   See examples
                 </Button>
