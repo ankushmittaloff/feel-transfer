@@ -15,7 +15,7 @@ const Header = () => {
                   <path d="M9 22V12H15V22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </div>
-              <span className="text-xl font-semibold text-foreground">FloorCraft</span>
+              <span className="text-xl font-semibold text-foreground">Envision</span>
             </a>
 
             {/* Nav buttons */}
