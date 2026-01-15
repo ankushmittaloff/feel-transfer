@@ -17,11 +17,11 @@ const Footer = () => {
                     <path d="M9 22V12H15V22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
                 </div>
-                <span className="text-xl font-semibold">FloorCraft</span>
+                <span className="text-xl font-semibold">Envision</span>
               </a>
 
               <h2 className="text-3xl md:text-4xl font-semibold mb-4 max-w-md">
-                See if FloorCraft is right for you{" "}
+                See if Envision is right for you{" "}
                 <span className="text-italic opacity-70">(it totally is)</span>
               </h2>
               <p className="text-background/60 mb-8 max-w-md">
@@ -35,7 +35,7 @@ const Footer = () => {
                   <a href="#" className="hover:text-background transition-colors">Terms of service</a>
                   <a href="#" className="hover:text-background transition-colors">Privacy Policy</a>
                 </div>
-                <span className="mt-4">© 2024 FloorCraft. All rights reserved.</span>
+                <span className="mt-4">© 2024 Envision. All rights reserved.</span>
               </div>
             </div>
 
@@ -44,8 +44,8 @@ const Footer = () => {
               <div className="bg-background/5 rounded-2xl border border-background/10 p-6">
                 <p className="text-sm text-background/60 mb-6 text-center">
                   High volume of bookings, limited slots. For faster service, email{" "}
-                  <a href="mailto:hello@floorcraft.io" className="text-coral hover:underline">
-                    hello@floorcraft.io
+                  <a href="mailto:hello@envision.io" className="text-coral hover:underline">
+                    hello@envision.io
                   </a>
                 </p>
 
