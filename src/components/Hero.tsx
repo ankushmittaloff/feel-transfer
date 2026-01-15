@@ -23,7 +23,11 @@ const Hero = () => {
                   Upload a floor plan
                   <ArrowRight className="w-5 h-5" />
                 </Button>
-                <Button variant="heroOutline" size="xl">
+                <Button 
+                  variant="heroOutline" 
+                  size="xl"
+                  onClick={() => document.getElementById('interactive-demo')?.scrollIntoView({ behavior: 'smooth' })}
+                >
                   See examples
                 </Button>
               </div>
