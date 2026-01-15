@@ -1,6 +1,7 @@
-import { useState, useEffect, useRef, lazy, Suspense, useCallback } from "react";
+import { useState, useEffect, useRef, lazy, Suspense, useCallback, ChangeEvent } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Maximize2, Hand } from "lucide-react";
+import { Maximize2, Hand, Upload, X, ImageIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 import plan2d from "@/assets/plan_2d.jpg";
 import dollhouse3d from "@/assets/dollhouse_3d.jpg";
@@ -18,7 +19,7 @@ import japandiGarden360 from "@/assets/japandi_garden_360.jpg";
 import japandiPool360 from "@/assets/japandi_pool_360.jpg";
 
 type ViewMode = "2D" | "3D" | "360";
-type InteriorStyle = "modern" | "scandi" | "japandi";
+type InteriorStyle = "modern" | "scandi" | "japandi" | "custom";
 type WindowView = "city" | "garden" | "pool";
 
 const PanoramaViewer = lazy(() => import("./PanoramaViewer"));
@@ -42,6 +43,7 @@ const STYLE_OPTIONS: { value: InteriorStyle; label: string }[] = [
   { value: "modern", label: "Modern" },
   { value: "scandi", label: "Scandi" },
   { value: "japandi", label: "Japandi" },
+  { value: "custom", label: "Custom" },
 ];
 
 const VIEW_OPTIONS: { value: WindowView; label: string }[] = [
@@ -63,9 +65,13 @@ const InteractiveDemo2 = () => {
     return false;
   });
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [customPanorama, setCustomPanorama] = useState<string | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  
   const containerRef = useRef<HTMLDivElement>(null);
   const panoramaContainerRef = useRef<HTMLDivElement>(null);
   const hintTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const prefersReducedMotion = 
     typeof window !== "undefined" && 
@@ -76,13 +82,71 @@ const InteractiveDemo2 = () => {
   const getPanoramaKey = (style: InteriorStyle, view: WindowView) => `${style}_${view}`;
   
   const getCurrentPanorama = () => {
+    if (interiorStyle === "custom" && customPanorama) {
+      return customPanorama;
+    }
     const key = getPanoramaKey(interiorStyle, windowView);
     return PANORAMA_MAP[key] || living360;
   };
 
-  const isOptionAvailable = (_style: InteriorStyle, _view: WindowView) => {
-    // All combinations are now available
+  const isOptionAvailable = (style: InteriorStyle, _view: WindowView) => {
+    // Custom is only available if a custom panorama has been uploaded
+    if (style === "custom") {
+      return !!customPanorama;
+    }
     return true;
+  };
+
+  const handleFileUpload = (file: File) => {
+    if (!file.type.startsWith("image/")) {
+      return;
+    }
+    
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const result = e.target?.result as string;
+      setCustomPanorama(result);
+      setInteriorStyle("custom");
+      setMode("360");
+      triggerLoadingTransition();
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      handleFileUpload(file);
+    }
+    // Reset input so the same file can be selected again
+    e.target.value = "";
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) {
+      handleFileUpload(file);
+    }
+  };
+
+  const handleResetCustom = () => {
+    setCustomPanorama(null);
+    setInteriorStyle("modern");
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
 
   const handleStyleChange = (style: InteriorStyle) => {
@@ -348,76 +412,140 @@ const InteractiveDemo2 = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.25 }}
-              className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-10"
+              className="mt-6 flex flex-col items-center gap-6"
             >
-              {/* Interior Style Toggle */}
-              <div className="flex flex-col items-center gap-2">
-                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                  Interior Style
-                </span>
-                <div className="flex bg-white rounded-full p-1 shadow-md border border-border/40">
-                  {STYLE_OPTIONS.map((option) => {
-                    const isAvailable = isOptionAvailable(option.value, windowView);
-                    const isActive = interiorStyle === option.value;
-                    
-                    return (
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-10">
+                {/* Interior Style Toggle */}
+                <div className="flex flex-col items-center gap-2">
+                  <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                    Interior Style
+                  </span>
+                  <div className="flex bg-white rounded-full p-1 shadow-md border border-border/40">
+                    {STYLE_OPTIONS.filter(opt => opt.value !== "custom").map((option) => {
+                      const isAvailable = isOptionAvailable(option.value, windowView);
+                      const isActive = interiorStyle === option.value;
+                      
+                      return (
+                        <button
+                          key={option.value}
+                          onClick={() => isAvailable && handleStyleChange(option.value)}
+                          disabled={!isAvailable}
+                          className={`relative px-4 py-2 text-sm font-medium rounded-full transition-all duration-200 ${
+                            isActive
+                              ? "bg-primary text-primary-foreground shadow-sm"
+                              : isAvailable
+                                ? "text-foreground hover:bg-muted/60"
+                                : "text-muted-foreground/50 cursor-not-allowed"
+                          }`}
+                        >
+                          {option.label}
+                          {!isAvailable && (
+                            <span className="absolute -bottom-5 left-1/2 -translate-x-1/2 text-[10px] text-muted-foreground whitespace-nowrap">
+                              Coming soon
+                            </span>
+                          )}
+                        </button>
+                      );
+                    })}
+                    {/* Custom option - shown when custom panorama exists */}
+                    {customPanorama && (
                       <button
-                        key={option.value}
-                        onClick={() => isAvailable && handleStyleChange(option.value)}
-                        disabled={!isAvailable}
-                        className={`relative px-4 py-2 text-sm font-medium rounded-full transition-all duration-200 ${
-                          isActive
+                        onClick={() => handleStyleChange("custom")}
+                        className={`relative px-4 py-2 text-sm font-medium rounded-full transition-all duration-200 flex items-center gap-1.5 ${
+                          interiorStyle === "custom"
                             ? "bg-primary text-primary-foreground shadow-sm"
-                            : isAvailable
-                              ? "text-foreground hover:bg-muted/60"
-                              : "text-muted-foreground/50 cursor-not-allowed"
+                            : "text-foreground hover:bg-muted/60"
                         }`}
                       >
-                        {option.label}
-                        {!isAvailable && (
-                          <span className="absolute -bottom-5 left-1/2 -translate-x-1/2 text-[10px] text-muted-foreground whitespace-nowrap">
-                            Coming soon
-                          </span>
-                        )}
+                        <ImageIcon className="w-3.5 h-3.5" />
+                        Custom
                       </button>
-                    );
-                  })}
+                    )}
+                  </div>
                 </div>
+
+                {/* Window View Toggle - Hidden when custom style is active */}
+                {interiorStyle !== "custom" && (
+                  <div className="flex flex-col items-center gap-2">
+                    <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                      Window View
+                    </span>
+                    <div className="flex bg-white rounded-full p-1 shadow-md border border-border/40">
+                      {VIEW_OPTIONS.map((option) => {
+                        const isAvailable = isOptionAvailable(interiorStyle, option.value);
+                        const isActive = windowView === option.value;
+                        
+                        return (
+                          <button
+                            key={option.value}
+                            onClick={() => isAvailable && handleViewChange(option.value)}
+                            disabled={!isAvailable}
+                            className={`relative px-4 py-2 text-sm font-medium rounded-full transition-all duration-200 ${
+                              isActive
+                                ? "bg-primary text-primary-foreground shadow-sm"
+                                : isAvailable
+                                  ? "text-foreground hover:bg-muted/60"
+                                  : "text-muted-foreground/50 cursor-not-allowed"
+                            }`}
+                          >
+                            {option.label}
+                            {!isAvailable && (
+                              <span className="absolute -bottom-5 left-1/2 -translate-x-1/2 text-[10px] text-muted-foreground whitespace-nowrap">
+                                Coming soon
+                              </span>
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
               </div>
 
-              {/* Window View Toggle */}
-              <div className="flex flex-col items-center gap-2">
-                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                  Window View
-                </span>
-                <div className="flex bg-white rounded-full p-1 shadow-md border border-border/40">
-                  {VIEW_OPTIONS.map((option) => {
-                    const isAvailable = isOptionAvailable(interiorStyle, option.value);
-                    const isActive = windowView === option.value;
-                    
-                    return (
-                      <button
-                        key={option.value}
-                        onClick={() => isAvailable && handleViewChange(option.value)}
-                        disabled={!isAvailable}
-                        className={`relative px-4 py-2 text-sm font-medium rounded-full transition-all duration-200 ${
-                          isActive
-                            ? "bg-primary text-primary-foreground shadow-sm"
-                            : isAvailable
-                              ? "text-foreground hover:bg-muted/60"
-                              : "text-muted-foreground/50 cursor-not-allowed"
-                        }`}
-                      >
-                        {option.label}
-                        {!isAvailable && (
-                          <span className="absolute -bottom-5 left-1/2 -translate-x-1/2 text-[10px] text-muted-foreground whitespace-nowrap">
-                            Coming soon
-                          </span>
-                        )}
-                      </button>
-                    );
-                  })}
+              {/* Upload Controls */}
+              <div 
+                className={`flex flex-col items-center gap-3 p-4 rounded-xl border-2 border-dashed transition-all duration-200 ${
+                  isDragging 
+                    ? "border-primary bg-primary/5" 
+                    : "border-border/40 bg-white/50"
+                }`}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+              >
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleInputChange}
+                  className="hidden"
+                  id="panorama-upload"
+                />
+                <div className="flex items-center gap-3">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="gap-2"
+                  >
+                    <Upload className="w-4 h-4" />
+                    Upload 360° Image
+                  </Button>
+                  {customPanorama && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleResetCustom}
+                      className="gap-2 text-muted-foreground hover:text-destructive"
+                    >
+                      <X className="w-4 h-4" />
+                      Reset
+                    </Button>
+                  )}
                 </div>
+                <p className="text-xs text-muted-foreground">
+                  {isDragging ? "Drop your image here" : "or drag and drop an equirectangular panorama image"}
+                </p>
               </div>
             </motion.div>
           )}
